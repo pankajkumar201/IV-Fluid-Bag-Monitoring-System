@@ -1,0 +1,45 @@
+Description:
+A Python-based embedded healthcare system that monitors
+IV fluid levels and generates alerts when the fluid level
+reaches a critical threshold.
+"""
+
+import time
+import RPi.GPIO as GPIO
+
+# GPIO pin configuration
+FLUID_SENSOR_PIN = 18     # Simulated sensor input (digital/analog module)
+BUZZER_PIN = 23           # Buzzer output
+LED_PIN = 24              # Warning LED
+
+# Threshold logic (simulated)
+CRITICAL_LEVEL = 0        # 0 = IV fluid empty (simulation)
+
+# GPIO setup
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(FLUID_SENSOR_PIN, GPIO.IN)
+GPIO.setup(BUZZER_PIN, GPIO.OUT)
+GPIO.setup(LED_PIN, GPIO.OUT)
+
+print("IV Fluid Bag Monitoring System Started")
+
+try:
+    while True:
+        fluid_status = GPIO.input(FLUID_SENSOR_PIN)
+
+        if fluid_status == CRITICAL_LEVEL:
+            GPIO.output(BUZZER_PIN, GPIO.HIGH)
+            GPIO.output(LED_PIN, GPIO.HIGH)
+            print("⚠ ALERT: IV Fluid Level CRITICAL")
+        else:
+            GPIO.output(BUZZER_PIN, GPIO.LOW)
+            GPIO.output(LED_PIN, GPIO.LOW)
+            print("IV Fluid Level Normal")
+
+        time.sleep(1)
+
+except KeyboardInterrupt:
+    print("Monitoring Stopped")
+
+finally:
+    GPIO.cleanup()
